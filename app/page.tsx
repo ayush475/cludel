@@ -19,6 +19,10 @@ const animatePop = {
 };
 
 const STORAGE_KEY = 'cluedleGameState';
+const handleReset = () => {
+  localStorage.removeItem(STORAGE_KEY); // replace with your key
+window.location.reload();
+};
 
 export default function Cluedle() {
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -126,8 +130,11 @@ export default function Cluedle() {
             )}
           </CardContent>
         </Card>
+        <button onClick={handleReset}>Reset</button>
+
         <WinnerModal isOpen={showWinnerModal} onClose={handlePlayAgain} />
         <Footer creatorName="KUSU" />
+
       </div>
     </ThemeProvider>
   );
