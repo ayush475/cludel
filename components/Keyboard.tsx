@@ -46,24 +46,26 @@ export default function Keyboard({ onKeyPress, gameState }: KeyboardProps) {
   };
 
   return (
-    <div className="grid gap-1 sm:gap-2 max-w-full">
-      {KEYS.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex justify-center gap-1 sm:gap-2">
-          {row.map((key) => (
-            <Button
-              key={key}
-              onClick={() => onKeyPress(key)}
-              className={`${getKeyColor(key)} ${
-                key === 'ENTER' || key === 'BACKSPACE' 
-                  ? 'text-[8px] sm:text-xs px-1 sm:px-2 py-2 sm:py-3 min-w-[30px] sm:min-w-[40px] md:min-w-[60px]' 
-                  : 'text-xs sm:text-sm px-1 sm:px-2 py-2 sm:py-3 min-w-[20px] sm:min-w-[30px] md:min-w-[40px]'
-              } font-semibold rounded-lg shadow-md transition-all duration-200 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 uppercase`}
-            >
-              {key === 'BACKSPACE' ? '←' : key}
-            </Button>
-          ))}
-        </div>
-      ))}
+    <div className="fixed bottom-0 left-0 right-0 p-4  bg-white dark:bg-gray-800">
+      <div className="flex flex-col items-center gap-2">
+        {KEYS.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-center gap-2 ">
+            {row.map((key) => (
+              <Button
+                key={key}
+                onClick={() => onKeyPress(key)}
+                className={`${getKeyColor(key)} ${
+                  key === 'ENTER' || key === 'BACKSPACE' 
+                    ? 'text-[10px] sm:text-xs px-1 sm:px-2 py-3 sm:py-4 min-w-[40px] sm:min-w-[50px] md:min-w-[70px]' 
+                    : 'text-xs sm:text-sm px-2 sm:px-3 py-3 sm:py-4 min-w-[28px] sm:min-w-[36px] md:min-w-[48px]'
+                } font-semibold rounded-lg shadow-md transition-all duration-200 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 uppercase`}
+              >
+                {key === 'BACKSPACE' ? '←' : key}
+              </Button>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
