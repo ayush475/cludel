@@ -11,6 +11,8 @@ import GameInstructions from "@/components/GameInstructions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeProvider } from "next-themes";
 import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import "./main.css";
 
 const animatePop = {
 	"0%": { transform: "scale(1)" },
@@ -19,15 +21,12 @@ const animatePop = {
 };
 
 const STORAGE_KEY = "cluedleGameState";
-const handleReset = () => {
-	localStorage.removeItem(STORAGE_KEY); // replace with your key
-	window.location.reload();
-};
 
 export default function Cluedle() {
 	const [gameState, setGameState] = useState<GameState | null>(null);
 	const [showWinnerModal, setShowWinnerModal] = useState(false);
 	const [mounted, setMounted] = useState(false);
+	const [confetti, setConfetti] = useState<any>([]);
 
 	useEffect(() => {
 		setMounted(true);
@@ -76,6 +75,12 @@ export default function Cluedle() {
 		});
 	};
 
+	const handleReset = () => {
+		localStorage.removeItem(STORAGE_KEY); // replace with your key
+		setConfetti([]);
+		initializeNewGame();
+	};
+
 	const handleKeyPress = (key: string) => {
 		if (!gameState || gameState.gameStatus !== "playing") return;
 
@@ -95,6 +100,7 @@ export default function Cluedle() {
 					if (gameState.currentWordIndex === gameState.words.length - 1) {
 						newGameStatus = "won";
 						setShowWinnerModal(true);
+						generateConfetti();
 					} else {
 						newCurrentWordIndex++;
 					}
@@ -131,6 +137,23 @@ export default function Cluedle() {
 		setShowWinnerModal(false);
 	};
 
+	const generateConfetti = () => {
+		let newConfetti = [];
+		for (let i = 0; i < 50; i++) {
+			newConfetti.push({
+				left: Math.random() * 90 + "vw",
+				animationDelay: Math.random() * 2 + "s",
+				color: getRandomColor(),
+			});
+		}
+		setConfetti(newConfetti);
+	};
+
+	const getRandomColor = () => {
+		const colors = ["#f39c12", "#e74c3c", "#2ecc71", "#3498db", "#9b59b6"];
+		return colors[Math.floor(Math.random() * colors.length)];
+	};
+
 	if (!mounted) {
 		return null;
 	}
@@ -150,14 +173,19 @@ export default function Cluedle() {
 			<div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-2 sm:p-4 transition-colors duration-200">
 				{" "}
 				<Card className="w-full max-w-2xl mx-auto mb-4 bg-white dark:bg-gray-800 transition-colors duration-200">
-					<CardHeader className="flex justify-between items-center p-3 sm:p-6">
+					<CardHeader className="flex flex-row justify-between items-center p-3 sm:p-6">
 						<CardTitle className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white">
 							Cluedle
 						</CardTitle>{" "}
 						<ThemeToggle />
+						<div className="flex items-center gap-2">
+							<GameInstructions />
+							<Button variant="outline" tabIndex={-1} onClick={handleReset}>
+								Reset
+							</Button>
+						</div>
 					</CardHeader>
 					<CardContent className="space-y-4 sm:space-y-8 p-3 sm:p-6">
-						<GameInstructions />
 						{gameState && (
 							<>
 								<p className="text-center font-medium text-base sm:text-lg text-gray-700 dark:text-gray-300">
@@ -172,7 +200,17 @@ export default function Cluedle() {
 						)}
 					</CardContent>
 				</Card>
-				<button onClick={handleReset}>Reset</button>
+				{confetti.map((confettiPiece: any, index: any) => (
+					<div
+						key={index}
+						className="confetti"
+						style={{
+							left: confettiPiece.left,
+							backgroundColor: confettiPiece.color,
+							animationDelay: confettiPiece.animationDelay,
+						}}
+					></div>
+				))}
 				<Footer creatorName="KUSU" />
 			</div>
 		</ThemeProvider>
